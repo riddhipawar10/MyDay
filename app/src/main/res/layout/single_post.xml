@@ -28,13 +28,22 @@
                 android:id="@+id/desTxt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="description" />
+                android:text="Description" />
 
             <TextView
                 android:id="@+id/bioTxt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="TextView" />
+                android:text="Body" />
+
+            <TextView
+                android:id="@+id/authorTxt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Author"
+                android:textColor="#333333"
+                android:textSize="14sp"
+                android:layout_marginTop="4dp"/>
         </LinearLayout>
 
     </LinearLayout>

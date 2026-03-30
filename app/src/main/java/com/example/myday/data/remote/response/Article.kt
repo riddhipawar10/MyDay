@@ -1,14 +1,13 @@
 package com.example.myday.data.remote.response
 
 data class Article(
-    val author: Author,
-    val body: String,
-    val createdAt: String,
-    val description: String,
-    val favorited: Boolean,
-    val favoritesCount: Int,
-    val slug: String,
-    val tagList: List<String>,
-    val title: String,
-    val updatedAt: String
+    val title: String = "",
+    val description: String = "",
+    val body: String = "",
+    val userId: String = "",
+    val favorited: Boolean = false,
+    val favoritesCount: Int = 0,
+    val slug: String = "",
+    val tagList: List<String> = emptyList(),
+    val author: Author = Author()
 )

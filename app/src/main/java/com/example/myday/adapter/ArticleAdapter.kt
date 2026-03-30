@@ -5,7 +5,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.myday.R
 import com.example.myday.data.remote.response.Article
 
@@ -17,21 +16,21 @@ class ArticleAdapter(private val list: List<Article>?): RecyclerView.Adapter<Art
         return ArticleViewHolder(view)
     }
 
-    override fun getItemCount(): Int {
-        return list?.size ?: 0
-    }
+    override fun getItemCount(): Int = list?.size ?: 0
 
     override fun onBindViewHolder(holder: ArticleViewHolder, position: Int) {
         val current = list?.get(position)
-        holder.titleTxt.text = current?.title.toString()
-        holder.bioTxt.text = current?.body
+        holder.titleTxt.text = current?.title
         holder.desTxt.text = current?.description
+        holder.bodyTxt.text = current?.body
+        holder.authorTxt.text = current?.author?.username ?: current?.userId
     }
 
 
-    inner class ArticleViewHolder(itemView: View): ViewHolder(itemView){
-        val titleTxt = itemView.findViewById<TextView>(R.id.titleTxt)
-        val desTxt = itemView.findViewById<TextView>(R.id.desTxt)
-        val bioTxt = itemView.findViewById<TextView>(R.id.bioTxt)
+    inner class ArticleViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+        val titleTxt: TextView = itemView.findViewById(R.id.titleTxt)
+        val desTxt: TextView = itemView.findViewById(R.id.desTxt)
+        val bodyTxt: TextView = itemView.findViewById(R.id.bioTxt)
+        val authorTxt: TextView = itemView.findViewById(R.id.authorTxt)
     }
 }

@@ -3,6 +3,7 @@ package com.example.myday.ui.screen.auth
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +19,7 @@ import com.example.myday.databinding.SignUpFragmentBinding
 import com.example.myday.ui.viewmodel.MyDayViewModel
 import com.example.myday.utils.NetworkResult
 import com.example.myday.utils.TokenManager
+import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlin.getValue
@@ -26,7 +28,7 @@ import kotlin.getValue
 @AndroidEntryPoint
 class SignupFragment: Fragment() {
 
-    private val myViewModel by viewModels<MyDayViewModel>()
+    //private val myViewModel by viewModels<MyDayViewModel>()
     private lateinit var binding: SignUpFragmentBinding
 
     @Inject
@@ -43,43 +45,43 @@ class SignupFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        if (tokenManager.getToken()!=null){
-            startActivity(Intent(requireContext(), DashboardActivity::class.java))
-        }else{
-            binding.btnSignUp.setOnClickListener {
-                val username = binding.txtUsername.text.toString()
-                val email = binding.txtEmail.text.toString()
-                val password = binding.txtPassword.text.toString()
-                signUp(username,email,password)
-            }
-            handleSigUp()
-            binding.btnLogin.setOnClickListener {
-                findNavController().navigate(R.id.action_signupFragment_to_loginFragment2)
-            }
+        binding.btnSignUp.setOnClickListener {
+            val username = binding.txtUsername.text.toString()
+            val email = binding.txtEmail.text.toString()
+            val password = binding.txtPassword.text.toString()
+            signUp(username, email, password)
+        }
+        binding.btnLogin.setOnClickListener {
+            findNavController().navigate(R.id.action_signupFragment_to_loginFragment2)
         }
     }
 
     private fun signUp(username: String, email: String, password: String) {
-        if(TextUtils.isEmpty(email)&& TextUtils.isEmpty(password)&& TextUtils.isEmpty(username)){
-            Toast.makeText(requireContext(), "Please fill every fields", Toast.LENGTH_SHORT).show()
-        }else{
-            myViewModel.signup(SignUpRequest(User(username,email,password)))
-        }
-    }
+        if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password) || TextUtils.isEmpty(username)) {
+            Toast.makeText(requireContext(), "Please fill all fields", Toast.LENGTH_SHORT).show()
+        } else {
 
-    private fun handleSigUp(){
-        myViewModel.signupResponseLiveData.observe(viewLifecycleOwner){
-            when(it){
-                is NetworkResult.Loading -> {
+            val auth = FirebaseAuth.getInstance()
+
+            auth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        val user = FirebaseAuth.getInstance().currentUser
+                        val uid = user?.uid
+
+                        uid?.let {
+                            tokenManager.saveToken(it)
+                        }
+
+                        Log.d("TOKEN", tokenManager.getToken().toString())
+
+                        Toast.makeText(requireContext(), "Signup Successful", Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(requireContext(), DashboardActivity::class.java))
+                    }
+                    else {
+                        Toast.makeText(requireContext(), "Error: ${it.exception?.message}", Toast.LENGTH_SHORT).show()
+                    }
                 }
-                is NetworkResult.Success ->{
-                    Toast.makeText(requireContext(), "${it.data}", Toast.LENGTH_SHORT).show()
-                }
-                is NetworkResult.Failed -> {
-                    Toast.makeText(requireContext(), "Something went wrong ", Toast.LENGTH_SHORT).show()
-                }
-            }
         }
     }
 }

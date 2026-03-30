@@ -12,10 +12,10 @@ import retrofit2.http.POST
 
 interface Auth {
 
-    @POST("users")
+    @POST("api/users")
     suspend fun signUp(@Body signUpRequest: SignUpRequest): Response<SignUpResponse>
 
-    @POST("users/login")
+    @POST("api/users/login")
     suspend fun login(@Body loginRequest: LoginRequest): Response<LoginResponse>
 
 

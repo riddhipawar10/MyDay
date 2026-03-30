@@ -13,17 +13,20 @@ app.get("/", (req, res) => {
 });
 
 // ================= LOGIN =================
-app.post("/api/auth/login", (req, res) => {
+app.post("/api/users/login", (req, res) => {
     try {
-        const { email, password } = req.body.user;
+        const { email, password } = req.body.user || {};
 
-        // Dummy validation (for testing)
+        if (!email || !password) {
+            return res.status(400).json({ message: "Missing fields" });
+        }
+
         if (email === "riddhi@gmail.com" && password === "123456") {
             return res.json({
                 user: {
-                    email: email,
+                    email,
                     username: "riddhi",
-                    token: "dummy-token-123",
+                    token: "dummy-token",
                     bio: "",
                     image: ""
                 }
@@ -35,31 +38,31 @@ app.post("/api/auth/login", (req, res) => {
         });
 
     } catch (error) {
-        res.status(500).json({
-            message: "Something went wrong"
-        });
+        res.status(500).json({ message: "Server error" });
     }
 });
 
 // ================= SIGNUP =================
-app.post("/api/auth/signup", (req, res) => {
+app.post("/api/users", (req, res) => {
     try {
-        const { email, password, username } = req.body.user;
+        const { email, password, username } = req.body.user || {};
 
-        return res.json({
+        if (!email || !password || !username) {
+            return res.status(400).json({ message: "Missing fields" });
+        }
+
+        res.json({
             user: {
-                email: email,
-                username: username,
-                token: "dummy-token-123",
+                email,
+                username,
+                token: "dummy-token",
                 bio: "",
                 image: ""
             }
         });
 
     } catch (error) {
-        res.status(500).json({
-            message: "Something went wrong"
-        });
+        res.status(500).json({ message: "Server error" });
     }
 });
 
